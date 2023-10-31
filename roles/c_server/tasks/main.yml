@@ -1,0 +1,65 @@
+- name: install the prerequisites
+  yum:
+    name:
+      - java-1.8.0-openjdk
+      - epel-release
+      - wget
+      - which
+    state: present
+  become: yes
+
+- name: add elastic search rpm repository
+  shell: rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+
+- name: add elastic search repository
+  copy:
+    content: |
+      [elasticsearch-7.x]
+      name=Elasticsearch repository for 7.x packages
+      baseurl=https://artifacts.elastic.co/packages/7.x/yum
+      gpgcheck=1
+      gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+      enabled=1
+      autorefresh=1
+      type=rpm-md
+    dest: /etc/yum.repos.d/elasticsearch.repo
+  become: yes
+
+- name: install elastic search (CentOS)
+  yum:
+    name: elasticsearch
+    state: present
+  become: yes
+
+- name: elastic search restarting / enabling
+  systemd:
+    name: elasticsearch
+    enabled: yes
+    state: started
+  become: yes
+
+- name: install kibana (CentOS)
+  yum:
+    name: kibana
+    state: present
+  become: yes
+
+- name: kibana restarting / enabling
+  systemd:
+    name: kibana
+    enabled: yes
+    state: started
+  become: yes
+
+- name: install logstash (CentOS)
+  yum:
+    name: logstash
+    state: present
+  become: yes
+
+- name: logstash restarting / enabling
+  systemd:
+    name: logstash
+    enabled: yes
+    state: started
+  become: yes
